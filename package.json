@@ -1,0 +1,29 @@
+{
+  "name": "layout-core",
+  "version": "1.0.0",
+  "author": "Kim. MinHyuck <kimminhyug29@gmail.com>",
+  "license": "MIT",
+  "keywords": [
+    "grid",
+    "layout",
+    "engine",
+    "pure",
+    "coordinate",
+    "computation"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kimminhyug/layout-core"
+  },
+  "description": "Grafana-style grid layout engine (pure coordinate computation)",
+  "main": "dist/layout.js",
+  "types": "dist/layout.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "node --test dist/layout.test.js"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.0"
+  }
+}
