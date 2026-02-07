@@ -130,15 +130,12 @@ export const computeLayout = (input: ComputeLayoutInput): GridItem[] => {
     case "move": {
       const target = items.find((i) => i.id === action.id);
       if (!target) return items;
-      const moved = {
-        ...target,
-        x: Math.max(0, Math.min(action.x, columns - 1)),
-        y: Math.max(0, action.y),
-      };
-      const w = Math.min(target.w, columns - moved.x);
-      const updated = { ...moved, w };
+      // 위치만 변경, 크기(w,h)는 유지. x는 그리드 밖으로 나가지 않도록 clamp
+      const x = Math.max(0, Math.min(action.x, columns - target.w));
+      const y = Math.max(0, action.y);
+      const moved = { ...target, x, y };
       const others = items.filter((i) => i.id !== action.id);
-      return pushDown(updated, others, columns);
+      return pushDown(moved, others, columns);
     }
     case "resize": {
       const target = items.find((i) => i.id === action.id);
