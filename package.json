@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "author": "Kim. MinHyuck <kimminhyug29@gmail.com>",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "keywords": [
     "grid",
     "layout",
