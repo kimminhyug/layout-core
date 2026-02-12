@@ -5,6 +5,14 @@ export type GridItem = {
   y: number;
   w: number;
   h: number;
+  /** 최소 너비(그리드 칸 수). 미지정 시 1 */
+  minW?: number;
+  /** 최대 너비(그리드 칸 수). 미지정 시 columns - x */
+  maxW?: number;
+  /** 최소 높이(그리드 칸 수). 미지정 시 1 */
+  minH?: number;
+  /** 최대 높이(그리드 칸 수). 미지정 시 제한 없음 */
+  maxH?: number;
 };
 // LayoutAction: 그리드 아이템 추가, 이동, 크기 변경, 제거 등의 작업
 export type LayoutAction =
@@ -31,12 +39,16 @@ export const getCollidingItems = (
   items: GridItem[]
 ): GridItem[] => items.filter((other) => collides(item, other));
 
-// clampItem: 그리드 아이템 위치 제한
+// clampItem: 그리드 아이템 위치·크기 제한 (minW/maxW/minH/maxH 반영)
 const clampItem = (item: GridItem, columns: number): GridItem => {
   const x = Math.max(0, Math.min(item.x, columns - 1));
-  const w = Math.max(1, Math.min(item.w, columns - x));
+  const minW = Math.max(1, item.minW ?? 1);
+  const maxW = Math.min(columns - x, item.maxW ?? columns - x);
+  const w = Math.max(minW, Math.min(maxW, item.w));
   const y = Math.max(0, item.y);
-  const h = Math.max(1, item.h);
+  const minH = Math.max(1, item.minH ?? 1);
+  const maxH = item.maxH ?? Infinity;
+  const h = Math.max(minH, Math.min(maxH, item.h));
   return { ...item, x, y, w, h };
 };
 
@@ -140,8 +152,12 @@ export const computeLayout = (input: ComputeLayoutInput): GridItem[] => {
     case "resize": {
       const target = items.find((i) => i.id === action.id);
       if (!target) return items;
-      const w = Math.max(1, Math.min(action.w, columns - target.x));
-      const h = Math.max(1, action.h);
+      const minW = Math.max(1, target.minW ?? 1);
+      const maxW = Math.min(columns - target.x, target.maxW ?? columns - target.x);
+      const w = Math.max(minW, Math.min(maxW, action.w));
+      const minH = Math.max(1, target.minH ?? 1);
+      const maxH = target.maxH ?? Infinity;
+      const h = Math.max(minH, Math.min(maxH, action.h));
       const resized = { ...target, w, h };
       const others = items.filter((i) => i.id !== action.id);
       return pushDown(resized, others, columns);
